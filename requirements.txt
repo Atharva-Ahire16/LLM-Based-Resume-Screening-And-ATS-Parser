@@ -1,0 +1,5 @@
+streamlit>=1.36.0
+crewai>=0.74.0
+requests>=2.31.0
+openai>=1.40.0
+litellm>=1.47.0
