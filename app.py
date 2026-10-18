@@ -1,5 +1,5 @@
 """
-NovaHire - A Resume Screening Agent
+NovaHire - A Hiring Agent
 Serves both Individual and Recruiter dashboards.
 Reuses the existing score.py pipeline (PDFHandler + ResumeEvaluator + transform).
 """
