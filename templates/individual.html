@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Score — Individual Resume Check</title>
+  <meta name="description" content="Upload your resume and get an instant AI-powered ATS score with detailed feedback." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body class="individual-page">
+
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <nav class="navbar">
+    <a href="/" class="nav-back">← Back</a>
+    <div class="nav-brand">
+      <span class="nav-logo">👤</span>
+      <span class="nav-title">Individual ATS Check</span>
+    </div>
+    <div class="nav-badge">AI Scoring</div>
+  </nav>
+
+  <main class="page-main">
+    <!-- Upload Panel -->
+    <section class="upload-panel" id="upload-panel">
+      <div class="upload-header">
+        <h1 class="page-title">Check Your <span class="gradient-text">ATS Score</span></h1>
+        <p class="page-subtitle">Get an instant AI-powered evaluation of your resume against recruiter expectations.</p>
+      </div>
+
+      <div class="upload-zone" id="upload-zone">
+        <div class="upload-zone-inner" id="drop-zone">
+          <div class="upload-icon-wrap">
+            <span class="upload-icon">📄</span>
+          </div>
+          <p class="upload-primary">Drop your PDF resume here</p>
+          <p class="upload-secondary">or</p>
+          <label for="resume-input" class="btn btn-primary" id="browse-btn">Browse File</label>
+          <input type="file" id="resume-input" accept=".pdf" hidden />
+          <p class="upload-hint">PDF only · Max 16 MB</p>
+        </div>
+      </div>
+
+      <!-- File selected state -->
+      <div class="file-selected hidden" id="file-selected">
+        <div class="file-info">
+          <span class="file-icon">📄</span>
+          <div class="file-meta">
+            <span class="file-name" id="file-name-display">resume.pdf</span>
+            <span class="file-size" id="file-size-display">0 KB</span>
+          </div>
+          <button class="file-remove" id="file-remove-btn" aria-label="Remove file">✕</button>
+        </div>
+        <button class="btn btn-primary btn-full" id="analyze-btn">
+          <span class="btn-icon">⚡</span> Analyze Resume
+        </button>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <section class="loading-panel hidden" id="loading-panel">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <h2 class="loading-title">Analyzing your resume…</h2>
+        <div class="loading-steps" id="loading-steps">
+          <div class="loading-step active" id="step-extract">
+            <span class="step-dot"></span>
+            <span>Extracting resume sections</span>
+          </div>
+          <div class="loading-step" id="step-github">
+            <span class="step-dot"></span>
+            <span>Fetching GitHub data</span>
+          </div>
+          <div class="loading-step" id="step-evaluate">
+            <span class="step-dot"></span>
+            <span>AI evaluation in progress</span>
+          </div>
+          <div class="loading-step" id="step-save">
+            <span class="step-dot"></span>
+            <span>Saving results to CSV</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Panel -->
+    <section class="results-panel hidden" id="results-panel">
+      <div class="results-header">
+        <div class="results-hero">
+          <div class="score-circle-wrap">
+            <svg class="score-ring" viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="52" />
+              <circle class="ring-fill" cx="60" cy="60" r="52" id="score-ring-fill" />
+            </svg>
+            <div class="score-center">
+              <span class="score-number" id="final-score">0</span>
+              <span class="score-label">/ 100</span>
+            </div>
+          </div>
+          <div class="results-meta">
+            <h2 class="results-name" id="candidate-name">Candidate</h2>
+            <p class="results-position" id="candidate-position">–</p>
+            <div class="score-badge" id="score-badge">–</div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-outline" id="download-csv-btn-individual">
+            💾 Download CSV
+          </button>
+          <button class="btn btn-secondary" id="analyze-another-btn">
+            🔄 Analyze Another
+          </button>
+        </div>
+      </div>
+
+      <!-- Category Scores -->
+      <div class="scores-grid" id="scores-grid">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Bonus / Deductions -->
+      <div class="bonus-row" id="bonus-row">
+        <div class="bonus-card" id="bonus-card">
+          <span class="bonus-label">⭐ Bonus</span>
+          <span class="bonus-value" id="bonus-value">+0</span>
+          <p class="bonus-detail" id="bonus-detail"></p>
+        </div>
+        <div class="deduction-card hidden" id="deduction-card">
+          <span class="bonus-label">⚠️ Deductions</span>
+          <span class="deduction-value" id="deduction-value">-0</span>
+          <p class="bonus-detail" id="deduction-detail"></p>
+        </div>
+      </div>
+
+      <!-- Strengths & Improvements -->
+      <div class="feedback-grid">
+        <div class="feedback-card strengths-card">
+          <h3 class="feedback-title">✅ Key Strengths</h3>
+          <ul class="feedback-list" id="strengths-list"></ul>
+        </div>
+        <div class="feedback-card improvements-card">
+          <h3 class="feedback-title">🔧 Areas for Improvement</h3>
+          <ul class="feedback-list" id="improvements-list"></ul>
+        </div>
+      </div>
+
+      <!-- Skills Tags -->
+      <div class="skills-section">
+        <h3 class="section-label">💻 Detected Skills</h3>
+        <div class="skills-tags" id="skills-tags"></div>
+      </div>
+
+      <!-- Contact -->
+      <div class="contact-row" id="contact-row"></div>
+    </section>
+
+    <!-- Error State -->
+    <div class="error-toast hidden" id="error-toast">
+      <span class="error-icon">❌</span>
+      <span class="error-msg" id="error-msg">Something went wrong.</span>
+      <button class="error-close" id="error-close">✕</button>
+    </div>
+
+  </main>
+
+  <script src="/static/individual.js"></script>
+</body>
+</html>

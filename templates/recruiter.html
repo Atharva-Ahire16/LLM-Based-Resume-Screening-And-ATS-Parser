@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recruiter Dashboard — ATS Hiring Agent</title>
+  <meta name="description" content="Recruiter dashboard for managing and comparing candidate ATS scores with analytics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <!-- Lightweight chart library (Chart.js CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body class="recruiter-page">
+
+  <div class="bg-orbs">
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <a href="/" class="nav-back">← Back</a>
+    <div class="nav-brand">
+      <span class="nav-logo">🏢</span>
+      <span class="nav-title">Recruiter Dashboard</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-outline btn-sm" id="download-recruiter-csv">💾 Export CSV</button>
+      <label for="recruiter-resume-input" class="btn btn-primary btn-sm" id="upload-resume-btn">
+        📁 Upload Resumes (Bulk)
+      </label>
+      <input type="file" id="recruiter-resume-input" accept=".pdf" multiple hidden />
+    </div>
+  </nav>
+
+  <main class="dashboard-main">
+
+    <!-- Quick Bulk Dropzone -->
+    <section class="recruiter-dropzone-section">
+      <div class="recruiter-dropzone" id="recruiter-dropzone">
+        <div class="dropzone-icon">📥</div>
+        <div class="dropzone-content">
+          <h4>Batch Upload Candidate Resumes</h4>
+          <p>Drag & drop multiple PDF resumes here, or <label for="recruiter-resume-input" class="dropzone-browse-link">browse files</label> to score them all at once.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Row -->
+    <section class="stats-row" id="stats-row">
+      <div class="stat-card" id="stat-total">
+        <div class="stat-icon">👥</div>
+        <div class="stat-body">
+          <span class="stat-value" id="stat-total-val">–</span>
+          <span class="stat-label">Total Candidates</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-avg">
+        <div class="stat-icon">📊</div>
+        <div class="stat-body">
+          <span class="stat-value" id="stat-avg-val">–</span>
+          <span class="stat-label">Avg ATS Score</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-top">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-body">
+          <span class="stat-value" id="stat-top-val">–</span>
+          <span class="stat-label">Top Score</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-passing">
+        <div class="stat-icon">✅</div>
+        <div class="stat-body">
+          <span class="stat-value" id="stat-passing-val">–</span>
+          <span class="stat-label">Passing (≥60)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Row -->
+    <section class="charts-row">
+      <div class="chart-card chart-bar">
+        <h3 class="chart-title">Candidate Score Comparison</h3>
+        <div class="chart-wrap">
+          <canvas id="bar-chart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card chart-radar">
+        <h3 class="chart-title">Average Category Breakdown</h3>
+        <div class="chart-wrap">
+          <canvas id="radar-chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Candidate Table -->
+    <section class="table-section">
+      <div class="table-header">
+        <h3 class="table-title">All Candidates</h3>
+        <div class="table-controls">
+          <input type="text" class="search-input" id="candidate-search" placeholder="🔍 Search by name or company…" />
+          <select class="sort-select" id="sort-select">
+            <option value="total_score_desc">Score: High → Low</option>
+            <option value="total_score_asc">Score: Low → High</option>
+            <option value="name_asc">Name A → Z</option>
+            <option value="name_desc">Name Z → A</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrap" id="table-wrap">
+        <table class="candidates-table" id="candidates-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Candidate</th>
+              <th>Position</th>
+              <th>Open Source</th>
+              <th>Self Projects</th>
+              <th>Production</th>
+              <th>Tech Skills</th>
+              <th>Bonus</th>
+              <th>Total Score</th>
+              <th>Grade</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="candidates-tbody">
+            <!-- Injected by JS -->
+          </tbody>
+        </table>
+        <div class="table-empty hidden" id="table-empty">
+          <p>📭 No candidates yet. Upload a resume to get started.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Candidate Detail Modal -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal" id="candidate-modal">
+      <button class="modal-close" id="modal-close">✕</button>
+
+      <div class="modal-header">
+        <div class="modal-score-ring">
+          <svg class="score-ring score-ring-sm" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle class="ring-fill" cx="60" cy="60" r="52" id="modal-ring-fill" />
+          </svg>
+          <div class="score-center">
+            <span class="score-number score-number-sm" id="modal-score">–</span>
+            <span class="score-label">/100</span>
+          </div>
+        </div>
+        <div class="modal-meta">
+          <h2 class="modal-name" id="modal-name">–</h2>
+          <p class="modal-position" id="modal-position">–</p>
+          <p class="modal-email" id="modal-email">–</p>
+          <div class="modal-badge" id="modal-badge">–</div>
+        </div>
+      </div>
+
+      <div class="modal-scores" id="modal-scores"></div>
+
+      <div class="modal-feedback">
+        <div class="modal-feedback-col">
+          <h4>✅ Key Strengths</h4>
+          <ul id="modal-strengths"></ul>
+        </div>
+        <div class="modal-feedback-col">
+          <h4>🔧 Areas for Improvement</h4>
+          <ul id="modal-improvements"></ul>
+        </div>
+      </div>
+
+      <div class="modal-skills" id="modal-skills"></div>
+    </div>
+  </div>
+
+  <!-- Batch Upload Progress Modal -->
+  <div class="modal-overlay hidden" id="batch-modal-overlay">
+    <div class="modal batch-modal" id="batch-modal">
+      <div class="batch-modal-header">
+        <div class="batch-title-wrap">
+          <span class="batch-icon">⚡</span>
+          <div>
+            <h3 class="batch-title">Batch Candidate Evaluation</h3>
+            <p class="batch-subtitle" id="batch-subtitle">Evaluating candidate resumes...</p>
+          </div>
+        </div>
+        <button class="modal-close" id="batch-modal-close" style="position:static;">✕</button>
+      </div>
+
+      <!-- Overall Progress -->
+      <div class="batch-progress-box">
+        <div class="batch-progress-labels">
+          <span id="batch-progress-status">Processing 1 of 5...</span>
+          <span id="batch-progress-pct">0%</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="batch-progress-bar" style="width: 0%; background: var(--grad-primary);"></div>
+        </div>
+      </div>
+
+      <!-- File Queue List -->
+      <div class="batch-queue-list" id="batch-queue-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="batch-modal-footer">
+        <span class="batch-summary-note" id="batch-summary-note">Results are automatically saved to CSV and dashboard.</span>
+        <button class="btn btn-primary btn-sm" id="batch-done-btn">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Processing Toast -->
+  <div class="upload-toast hidden" id="upload-toast">
+    <div class="toast-spinner"></div>
+    <span id="toast-msg">Processing resume…</span>
+  </div>
+
+  <!-- Error Toast -->
+  <div class="error-toast hidden" id="error-toast">
+    <span class="error-icon">❌</span>
+    <span class="error-msg" id="error-msg">Something went wrong.</span>
+    <button class="error-close" id="error-close">✕</button>
+  </div>
+
+  <script src="/static/recruiter.js"></script>
+</body>
+</html>

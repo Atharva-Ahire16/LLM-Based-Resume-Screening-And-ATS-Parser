@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Hiring Agent — Smart Resume Evaluation</title>
+  <meta name="description" content="AI-powered ATS scoring for individuals and recruiters. Upload resumes, get instant scores, and track talent." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body class="landing-page">
+
+  <!-- Animated background -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="nav-logo">⚡</span>
+      <span class="nav-title">ATS Agent</span>
+    </div>
+    <div class="nav-badge">AI-Powered</div>
+  </nav>
+
+  <main class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🚀 Powered by Gemini &amp; Ollama</div>
+      <h1 class="hero-title">
+        Smart Resume<br/>
+        <span class="gradient-text">Evaluation System</span>
+      </h1>
+      <p class="hero-subtitle">
+        AI-driven ATS scoring that evaluates open source contributions,<br/>
+        production experience, self-projects, and technical skills.
+      </p>
+
+      <div class="role-cards">
+        <!-- Individual Card -->
+        <a href="/individual" class="role-card role-individual" id="btn-individual">
+          <div class="card-icon-wrap">
+            <div class="card-icon">👤</div>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Individual</h2>
+            <p class="card-desc">Upload your resume and get an instant ATS score breakdown with actionable feedback.</p>
+            <ul class="card-features">
+              <li>📄 PDF resume upload</li>
+              <li>📊 Detailed score breakdown</li>
+              <li>💡 Improvement suggestions</li>
+              <li>📈 GitHub analysis</li>
+            </ul>
+          </div>
+          <div class="card-cta">
+            <span>Check My Score</span>
+            <span class="cta-arrow">→</span>
+          </div>
+        </a>
+
+        <!-- Recruiter Card -->
+        <a href="/recruiter" class="role-card role-recruiter" id="btn-recruiter">
+          <div class="card-icon-wrap recruiter-icon-wrap">
+            <div class="card-icon">🏢</div>
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Recruiter</h2>
+            <p class="card-desc">Upload multiple resumes and manage a full dashboard of candidates with comparative analytics.</p>
+            <ul class="card-features">
+              <li>📁 Bulk resume processing</li>
+              <li>📋 Candidate dashboard</li>
+              <li>📉 Comparative analytics</li>
+              <li>💾 CSV export</li>
+            </ul>
+          </div>
+          <div class="card-cta recruiter-cta">
+            <span>Open Dashboard</span>
+            <span class="cta-arrow">→</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="scoring-legend">
+        <p class="legend-title">Scoring Breakdown</p>
+        <div class="legend-pills">
+          <span class="pill pill-1">Open Source — 35pts</span>
+          <span class="pill pill-2">Self Projects — 30pts</span>
+          <span class="pill pill-3">Production — 25pts</span>
+          <span class="pill pill-4">Tech Skills — 10pts</span>
+          <span class="pill pill-5">Bonus — +20pts</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/static/main.js"></script>
+</body>
+</html>
