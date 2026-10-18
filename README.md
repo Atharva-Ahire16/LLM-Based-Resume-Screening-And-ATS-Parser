@@ -1,4 +1,4 @@
-# ATS Hiring Agent
+# NovaHire - A Resume Screening Agent
 
 An automated resume evaluation engine that scores developer resumes by combining PDF text extraction, live GitHub activity analysis, and LLM-based rubric scoring.
 

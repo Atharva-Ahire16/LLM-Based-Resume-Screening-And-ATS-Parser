@@ -1,5 +1,5 @@
 """
-Configuration settings for the hiring agent application.
+Configuration settings for NovaHire - A Resume Screening Agent.
 """
 
 # Global development mode flag

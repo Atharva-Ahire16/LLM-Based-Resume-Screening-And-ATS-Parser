@@ -1,5 +1,5 @@
 """
-ATS Hiring Agent - Web Dashboard
+NovaHire - A Resume Screening Agent
 Serves both Individual and Recruiter dashboards.
 Reuses the existing score.py pipeline (PDFHandler + ResumeEvaluator + transform).
 """
